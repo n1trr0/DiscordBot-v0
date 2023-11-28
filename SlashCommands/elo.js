@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const axios = require('axios');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -32,9 +33,27 @@ module.exports = {
             }
 
             const summonerRank = await getSummonerRank(summonerInfo.id, riotRegion, riotApiKey);
+            const summonerIconUrl = getSummonerIconUrl(summonerInfo.profileIconId, riotRegion);
+
+            //getLatestVersion(); //checks ddragon last version
 
             if (summonerRank) {
-                await interaction.reply(`El ELO de ${riotUsername} en la región ${riotRegion.toUpperCase()} es ${summonerRank.tier} ${summonerRank.rank}`);
+                // Crear MessageEmbed
+                const embed = new EmbedBuilder()
+                    .setTitle(`Rango de ${riotUsername.toUpperCase()}`)
+                    .setColor(0xFFD500)
+                    .setDescription(`${riotUsername} es ${summonerRank.tier} ${summonerRank.rank}`)
+                    .setThumbnail(summonerIconUrl);
+                    /*.setFooter({
+                        text: client.user.username,
+                        iconURL: client.user.avatarURL(),
+                    });*/
+
+
+                // Respuesta
+                await interaction.reply({
+                    embeds: [embed],
+                });
             } else {
                 await interaction.reply(`${riotUsername} no tiene clasificación en la región ${riotRegion.toUpperCase()}.`);
             }
@@ -68,4 +87,23 @@ async function getSummonerRank(summonerId, region, apiKey) {
 
     const rankedData = response.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5');
     return rankedData || null;
+}
+
+function getSummonerIconUrl(profileIconId, region) {
+    return `https://ddragon.leagueoflegends.com/cdn/13.23.1/img/profileicon/${profileIconId}.png`;
+}
+async function getLatestVersion() {
+    try {
+        const response = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json');
+        const versions = response.data;
+
+        // La primera versión en la lista es la más reciente
+        const latestVersion = versions[0];
+
+        console.log('La versión más reciente de DDragon es:', latestVersion);
+        return latestVersion;
+    } catch (error) {
+        console.error('Error al obtener la versión de DDragon:', error.message);
+        throw error;
+    }
 }
