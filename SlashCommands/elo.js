@@ -24,7 +24,7 @@ module.exports = {
         const riotRegion = interaction.options.getString('region_riot').toLowerCase();
 
         try {
-            const riotApiKey = 'RGAPI-7da9ab36-67a3-49a3-b1f5-bbc42d36ad2a';
+            const riotApiKey = 'RGAPI_key';
 
             const summonerInfo = await getSummonerInfo(riotUsername, riotRegion, riotApiKey);
 
