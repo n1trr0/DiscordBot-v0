@@ -52,4 +52,4 @@ Client.on("interactionCreate", async (interaction) => {
 })
 
 //Conexión
-Client.login("MTE3ODgwNTYyMzk5MTgyODUwMA.GGkC9W.5SiUX5wBkAODLm7LprRv7VVU3sH_O-2URwRS14");
+Client.login("discord_key");
